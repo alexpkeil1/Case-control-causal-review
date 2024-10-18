@@ -47,3 +47,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+.DS_Store
+code/ccc_aipw.R
+#code/ccc_pscores.R
