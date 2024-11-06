@@ -19,11 +19,22 @@ codat = data.frame(z,x,y)
 # case control data
 ccdat = data.frame(z = z[samp], x=x[samp],y=y[samp])
 
-q0 = mean(codat$y)                                    # population risk
-q1 = mean(ccdat$y)                                    # study "risk"
 # intercept correction: population log-odds
 
-ccdat$offset = -log((q0/(1-q0))/(q1/(1-q1)))
+#n cases
+n1 = sum(ccdat$y==1)
+#n controls
+n0 = sum(ccdat$y==0)
+#intercept correction: population log-odds
+ccdat$offset = -log((q0/(1-q0))/(n1/n0))
+
+# alternative approach using the study/population odds, rather than sample size (yields same result)
+#q0 = mean(codat$y)                                    # population risk
+#q1 = mean(ccdat$y)                                    # study "risk"
+#ccdat$offset = -log((q0/(1-q0))/(q1/(1-q1)))
+
+
+
 
 ##### logistic model parameters
 # unmodified logistic regression in cohort data (all parameters unbiased)
