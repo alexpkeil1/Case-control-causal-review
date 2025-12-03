@@ -10,7 +10,7 @@ Mésidor, M., Xu, M., Diop, A., Fantodji, C., Parent, M. É., & Keil, A. (2025).
 - **code/ccc_pscores.R**: propensity score based methods
 - **code/ccc_weighted.R**: case-control weighted maximum likelihood
 - **code/ccc_tmle.R**: case-control weighted targete maximum likelihood
-
+- **slides/SER-CSEB Webinar_PartI/22.pptx**: Slides from a 3-Dec-2025 seminar on the paper, co-sponsored by SER and CSEB
 
 
 ### Requirements
