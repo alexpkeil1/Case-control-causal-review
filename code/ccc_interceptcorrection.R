@@ -26,6 +26,7 @@ n1 = sum(ccdat$y==1)
 #n controls
 n0 = sum(ccdat$y==0)
 #intercept correction: population log-odds
+q0 = mean(codat$y)                                    # population risk
 ccdat$offset = -log((q0/(1-q0))/(n1/n0))
 
 # alternative approach using the study/population odds, rather than sample size (yields same result)

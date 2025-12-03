@@ -1,11 +1,11 @@
 # case-control weighted TMLE estimator of Rose and van der Laan (AJE)
-# this code demonstrates the double-robustness property of TMLE
 # estimating risk in case-control studies
 # target parameter: marginal risk difference
+# this code demonstrates the double-robustness property of TMLE
 library(dplyr)
 
 # using large sample so that small sample/random sampling issues are minimized
-#set.seed(1232123)
+set.seed(1232123)
 N = 1000000
 # generate syntetic data under a known logistic model
 z = runif(N)                    # confounder
@@ -63,6 +63,7 @@ ccdat$Q_2initlink0 = predict(Q_2initm, newdata=mutate(ccdat, x=0), type="link")
 ccdat$Q_2uplink1   = ccdat$Q_2initlink1 + eps*1/g1 
 ccdat$Q_2uplink0   = ccdat$Q_2initlink0 + eps*(-1/(1-g1))
 
+# updated predictions, risk ratio
 ccdat$Q_2uplink1rr   = ccdat$Q_2initlink1 + eps2[1]*1/g1 
 ccdat$Q_2uplink0rr   = ccdat$Q_2initlink0 + eps2[2]*(1/(1-g1))
 
@@ -82,20 +83,28 @@ ccdat$Q_2upp0rr = plogis(ccdat$Q_2uplink0rr)
 # this corresponds to a case-control weighted average over the sample
 # final weighted risk difference
 (tmle_estimate <- mean((ccdat$Q_2upp1 - ccdat$Q_2upp0)*ccdat$wts/mean(ccdat$wts)))
+# [1] 0.1482672
+# final weighted risk ratio
 (tmle_estimate_rr <- mean((ccdat$Q_2upp1rr)*ccdat$wts/mean(ccdat$wts))/mean((ccdat$Q_2upp0rr)*ccdat$wts/mean(ccdat$wts)))
+# [1] 3.9908
+
 
 # compare with naive estimate under misspecified model
 (naive_estimate <- mean((ccdat$Q_2initp1 - ccdat$Q_2initp0)*ccdat$wts/mean(ccdat$wts)))
+# [1] 0.162365
 (naive_estimaterr <- mean((ccdat$Q_2initp1)*ccdat$wts/mean(ccdat$wts))/mean((ccdat$Q_2initp0)*ccdat$wts/mean(ccdat$wts)))
+# [1] 4.405607
 
 ##### marginal risk difference estimates
 # truth, under true model: E_Z(Y|X=1,Z) - E_Z(Y|X=0,Z)
 zvec = seq(0,1, length=1000000)
 sum(plogis(-3.5 + 1+zvec+1*zvec)*1/length(zvec)) - sum(plogis(-3.5 + 0+zvec+0*zvec)*1/length(zvec))
+# [1] 0.1484543
+
 
 # True risk ratio
 sum(plogis(-3.5 + 1+zvec+1*zvec)*1/length(zvec))/ (sum(plogis(-3.5 + 0+zvec+0*zvec)*1/length(zvec)))
-
+# [1] 4.021091
 
 ### bootstrap variance estimation (risk difference only)
 #1: create a function that takes in a dataset and outputs an estimate
@@ -151,6 +160,16 @@ run_bootsample <- function(i){
 #3: run that function over numerous draws from the data
 # not actually run because this is time intensive with large samples
 #bootests = sapply(1:1000, run_bootsample)
-#bootvar = var(bootests)                 # bootstrap variance
-#quantile(bootests, c(0.025, 0.975))     # percentile based confidence limits
+
+#bootvar = var(bootests)                            # bootstrap variance
+# [1] 4.247358e-07
+
+#quantile(bootests, c(0.025, 0.975))                # percentile based confidence limits
+#2.5%     97.5% 
+#  0.1469896 0.1495057 
+
 #tmle_estimate
+#[1] 0.1482672
+
+#tmle_estimate  + c(-1.96, 1.96)*sqrt(bootvar)     # wald-type confidence limits
+# [1] 0.1469898 0.1495445

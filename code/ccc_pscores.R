@@ -1,4 +1,3 @@
-# NOTE this file is a placeholder and is not complete
 # propsensity score based methods for case-control studies
 # estimating risk in case-control studies
 # target parameters: population level odds ratios, marginal risk difference, conditional causal effects
